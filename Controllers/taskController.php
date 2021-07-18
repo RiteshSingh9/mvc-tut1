@@ -1,6 +1,6 @@
 <?php
 
-class tasksController extends Controller
+class taskController extends Controller
 {
     public function index()
     {
@@ -44,8 +44,20 @@ class tasksController extends Controller
             }
         }
         $d['msg'] = $msg;
-        $d['title'] = $params['title'];
+        $d['title'] = $params['title'];;
         $this->set($d);
         $this->render("create");
+    }
+    public function edit($params)
+    {
+        require(ROOT . 'Models/Task.php');
+        extract($params['key']); 
+
+        $tasks = new Task();
+
+        $d['title'] = $params['title'];
+
+        $this->set($d);
+        $this->render("edit");
     }
 }

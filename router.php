@@ -5,55 +5,98 @@
  * into 3 different parts on the “/” character :
  * 
  */
+
 class Router
 {
     public static function parse($url, $request)
     {
-        require(ROOT."Config/Config.php");
-        $basePath=$config['dev']['basePath'];
+        require(ROOT . "Config/Config.php");
+        require(ROOT . "libs/route.php");
+
+        $basePath = $config['dev']['basePath'];
+        $routeHandler = new Route();
+
         $url = trim($url);
-        if ($url == $basePath) {
-            // show home page
-            $request->controller = "page";
-            $request->action = "home";
-            $request->params = ['title' => "Home Page"];
+        $arr = explode('/', $url);
+        $action = $arr[2];
+        $params = ['title' => ucfirst($action) . " Page"];
+        $e = $routeHandler->route($url, $path = "home", "page", "home", $request, $params);
+        if (!$e) {
+            $arr = explode('/', $url);
 
-        } elseif ($url == $basePath."home") {
-            // show Home page
-            $request->controller = "page";
-            $request->action = "home";
-            $request->params = ['title' => "Home Page"];
+            if ($arr[2] == 'task') {
+                $path = "task";
+                $action = "index";
+                // $params = ['title' => ucfirst($action) . " Page"];
 
-        } elseif ($url == $basePath."about") {
-            // show about page
-            $request->controller = "page";
-            $request->action = "about";
-            $request->params = ['title' => "About Page"];
-
-        } elseif ($url == $basePath."services") {
-            // show services page
-            $request->controller = "page";
-            $request->action = "services";
-            $request->params = ['title' => "Services Page"];
-
-        } elseif ($url == $basePath."task") {
-            // index page for tasks
-            $request->controller = "tasks";
-            $request->action = "index";
-            $request->params = [];
-        } 
-        elseif ($url == $basePath."task/create") {
-            // show create task page
-            $request->controller = "tasks";
-            $request->action = "create";
-            $request->params = ['title'=>"Create Task"];
-
-        } else {
-            $explode_url = explode('/', $url);
-            $request->controller = "page";
-            $request->action = "notFound";
-            $request->params = array_slice($explode_url, 2);
+                if (isset($arr[3])) {
+                    $action = $arr[3];
+                    $path .= "/" . $action;
+                }
+                if (isset($arr[4])) {
+                    $id = $arr[4];
+                    $path .= '/' . $id;
+                    $params['key'] = array(
+                        "id" => $arr[4],
+                    );
+                }
+                $params['title'] = ucfirst($action) . " Page";
+                $routeHandler->route($url, $path = $path, "task", $action, $request, $params);
+            } else {
+                $action = $path = $arr[2]; // action and path will be same due to same name;
+                $params = ['title' => ucfirst($action) . " Page"];
+                $routeHandler->route($url, $path = $path, "page", $action, $request, $params);
+            }
         }
-    }
 
+
+        /**
+         * Method 3 (old method)
+        switch ($url) {
+            case $basePath:
+                $request->controller = "page";
+                $request->action = "home";
+                $request->params = ['title' => "Home Page"];
+                break;
+
+            case $basePath . "home":
+                $request->controller = "page";
+                $request->action = "home";
+                $request->params = ['title' => "Home Page"];
+                break;
+
+            case $basePath . "about":
+                $request->controller = "page";
+                $request->action = "about";
+                $request->params = ['title' => "About Page"];
+                break;
+
+            case $basePath . "services":
+                $request->controller = "page";
+                $request->action = "services";
+                $request->params = ['title' => "Services Page"];
+                break;
+
+            case $basePath . "task":
+                $request->controller = "tasks";
+                $request->action = "index";
+                $request->params = [];
+                break;
+
+            case $basePath . "task/create":
+                $request->controller = "tasks";
+                $request->action = "create";
+                $request->params = ['title' => "Create Task"];
+                break;
+
+            default:
+                $explode_url = explode('/', $url);
+                $request->controller = "page";
+                $request->action = "notFound";
+                $request->params = array_slice($explode_url, 2);
+                break;
+        }
+
+         */
+    }
 }

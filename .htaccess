@@ -1,0 +1,4 @@
+RewriteEngine on
+RewriteRule ^([a-zA-Z0-9\-\_\/]*)$ Webroot/$1
+
+# This file will redirect user to Webroot directory i.e. only accessible directory

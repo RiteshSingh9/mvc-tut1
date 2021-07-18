@@ -1,5 +1,4 @@
 <?php
-
 class Task extends Model
 {
     public function showAllTasks()
@@ -12,6 +11,18 @@ class Task extends Model
         $req->execute();
         return $req->fetchAll();
     }
+
+    public function showTask($id)
+    {
+        /**
+         * shows task by id
+         */
+        $sql = "SELECT * FROM `tasks` WHERE `task_id`=" . $id;
+        $req = Database::getBdd()->prepare($sql);
+        $req->execute();
+        return $req->fetch();
+    }
+
     public function create($title, $desc)
     {
         // current_timestamp()
@@ -22,10 +33,30 @@ class Task extends Model
 
         $req = Database::getBdd()->prepare($sql);
         return $req->execute([
-            'title'=> $title,
-            'desc'=> $desc,
+            'title' => $title,
+            'desc' => $desc,
             'created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s')
         ]);
+    }
+
+    public function edit($id, $title, $desc)
+    {
+        $sql = "UPDATE `tasks` SET `task_title` = :title, `task_desc` = :desc, `task_updated_at` = :updated_at WHERE `task_id`=:id";
+
+        $req = Database::getBdd()->prepare($sql);
+        return $req->execute([
+            'id' => $id,
+            'title' => $title,
+            'desc' => $desc,
+            'updated_at' => date('Y-m-d H:i:s')
+        ]);
+    }
+
+    public function delete($id)
+    {
+        $sql = "DELETE FROM `tasks` WHERE `task_id`=?";
+        $req = Database::getBdd()->prepare($sql);
+        return $req->execute([$id]);
     }
 }

@@ -12,9 +12,6 @@
         <button type="submit" class="btn btn-outline-primary w-25">Add</button>
     </div>
     <?php
-        // foreach ($msg as $key => $value) {
-        //     echo $value;
-        // }
         echo $msg;
     ?>
 </form>
